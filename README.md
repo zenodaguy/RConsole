@@ -5,5 +5,6 @@
 - Roles to specify which commands can and can't be ran.
 - Easily create new commands by following the documentation.
 - Secure so the server and client handle different services.
+- And much more!
 
 *Inspired by [Cmdr](https://github.com/evaera/Cmdr)*
