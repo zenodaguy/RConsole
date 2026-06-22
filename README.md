@@ -1,10 +1,8 @@
-<p align="center">
-  <img src="https://github.com/zenodaguy/RConsole/blob/7949667176c241fe7befb95b130039932ce39e7a/Images/2.png"/>
-</p>
-
-<p align="center">
-[Documentation](https://zeno-12.gitbook.io/zeno-docs)
-</p>
+<div align="center">
+	<img src="Images/2.png" alt="Zeno" height="150" />
+	<br/>
+	<p><a href="https://zeno-12.gitbook.io/zeno-docs">Documentation</a></p>
+</div>
 
 **RConsole** is a library for *Roblox Studio* where you can create, modify, and run commands.
 - Roles to specify which commands can and can't be ran.
