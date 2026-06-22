@@ -3,7 +3,7 @@ local BaseRoles = {}
 BaseRoles.List = {
 	Admin = {
 		Users = {
-			434151606
+			0
 		},
 
 		CanOpenConsole = true
