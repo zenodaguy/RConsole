@@ -1,78 +1,62 @@
-local Console = {}
+local BaseRoles = require(script.BaseRoles)
+local CustomRoles = require(script.CustomRoles)
 
-local Commands = {}
-local Logger
-local Roles = require(script.Shared.Roles)
+local Roles = {}
 
-function Console:RegisterCommand(name, func, role, description)
-	Commands[string.lower(name)] = {
-		Callback = func,
-		Role = role or "Player",
-		Description = description or "No description provided."
-	}
+Roles.List = {}
+
+for roleName, data in pairs(BaseRoles.List) do
+	Roles.List[roleName] = data
 end
 
-function Console:SetLogger(logger)
-	Logger = logger
+for roleName, data in pairs(CustomRoles.List) do
+	Roles.List[roleName] = data
 end
 
-function Console:Log(message)
-	if typeof(Logger) == "table" and Logger.Log then
-		Logger:Log(message)
-	end
-end
-
-function Console:GetCommands()
-	return Commands
-end
-
-function Console:GetCommand(name)
-	return Commands[string.lower(name)]
-end
-
-function Console:ClearLogs()
-	if typeof(Logger) == "table" and Logger.Clear then
-		Logger:Clear()
-	end
-end
-
-function Console:Execute(player, input)
-	local args = string.split(input, " ")
-	local commandName = string.lower(table.remove(args, 1) or "")
-
-	if commandName == "" then
-		self:Log("[ERROR] No command entered")
-		return
-	end
-
-	local commandData = Commands[commandName]
-
-	if not commandData then
-		self:Log("[ERROR] Unknown command")
-		return
-	end
-
-	local requiredRole = commandData.Role
-	local playerRole = Roles:GetPlayerRole(player)
-
-	if requiredRole and requiredRole ~= "Player" then
-		if playerRole ~= requiredRole then
-			self:Log("[ERROR] You need " .. requiredRole .. " to use this command")
-			return
+function Roles:GetPlayerRole(player)
+	for roleName, data in pairs(self.List) do
+		for _, id in ipairs(data.Users) do
+			if player.UserId == id then
+				return roleName
+			end
 		end
 	end
 
-	local success, err = pcall(function()
-		commandData.Callback(player, self, table.unpack(args))
-	end)
-
-	if success then
-		if commandName ~= "help" and commandName ~= "clear" then
-			self:Log("[EXECUTED] " .. commandName .. " executed successfully")
-		end
-	else
-		self:Log("[ERROR] " .. tostring(err))
-	end
+	return "Player"
 end
 
-return Console
+function Roles:IsAdmin(player)
+	return self:GetPlayerRole(player) == "Admin"
+end
+
+function Roles:CanOpenConsole(player)
+	local role = self:GetPlayerRole(player)
+
+	if role == "Player" then
+		return false
+	end
+
+	local roleData = self.List[role]
+
+	if not roleData then
+		return false
+	end
+
+	return roleData.CanOpenConsole == true
+end
+
+function Roles:HasRole(player, roleName)
+	local currentRole = self:GetPlayerRole(player)
+
+	if currentRole == roleName then
+		return true
+	end
+
+	if currentRole == "Admin" then
+		return true
+	end
+
+	return false
+end
+
+return Roles
